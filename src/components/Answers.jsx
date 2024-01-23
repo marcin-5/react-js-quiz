@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-export default function Answers({ answers, onSelect }) {
+export default function Answers({ answers, selectedAnswer, answerState, onSelect }) {
   const shuffledAnswers = useRef();
 
   if (!shuffledAnswers.current) {
@@ -10,11 +10,30 @@ export default function Answers({ answers, onSelect }) {
 
   return (
     <ul id="answers">
-      {shuffledAnswers.current.map((answer, i) => (
-        <li key={i} className="answer">
-          <button onClick={() => onSelect(answer)}>{answer}</button>
-        </li>
-      ))}
+      {shuffledAnswers.current.map((answer, i) => {
+        const isSelected = selectedAnswer === answer;
+        let cssClass = '';
+
+        if (answerState === 'answered' && isSelected) {
+          cssClass = 'selected';
+        }
+
+        if ((answerState === 'correct' || answerState === 'wrong') && isSelected) {
+          cssClass = answerState;
+        }
+
+        return (
+          <li key={i} className="answer">
+            <button
+              onClick={() => onSelect(answer)}
+              className={cssClass}
+              disabled={answerState !== ''}
+            >
+              {answer}
+            </button>
+          </li>
+        );
+      })}
     </ul>
   );
 }
